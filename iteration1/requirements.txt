@@ -1,0 +1,38 @@
+# 迭代1 - 基础数据分析MVP 依赖包
+
+# Web框架
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# 数据处理
+pandas==2.1.1
+numpy==1.24.3
+
+# 数据源
+tushare==1.2.89
+akshare==1.11.80
+
+# 数据库
+SQLAlchemy==2.0.21
+
+# HTTP请求
+requests==2.31.0
+
+# 日期时间处理
+python-dateutil==2.8.2
+
+# 日志
+loguru==0.7.2
+
+# 开发工具
+python-dotenv==1.0.0
+
+# 测试
+pytest==7.4.2
+pytest-flask==1.2.0
+
+# 生产环境
+gunicorn==21.2.0
+
+# 可选：如果需要更多技术指标
+# talib==0.4.26  # 需要单独安装TA-Lib库

@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 量化交易分析系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- 欢迎区域 -->
+    <div class="col-12">
+        <div class="jumbotron bg-gradient text-white p-5 rounded mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="container">
+                <h1 class="display-4">
+                    <i class="fas fa-chart-line me-3"></i>
+                    量化交易分析系统
+                </h1>
+                <p class="lead">基于缠论技术分析的智能股票分析平台</p>
+                <p class="mb-4">
+                    集成分型识别、笔段分析、技术指标计算等功能，为您提供专业的股票技术分析服务。
+                </p>
+                <a class="btn btn-light btn-lg" href="{{ url_for('analysis') }}" role="button">
+                    <i class="fas fa-search me-2"></i>
+                    开始分析
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 快速分析 -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bolt me-2"></i>
+                    快速分析
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">输入股票代码，快速获取技术分析结果</p>
+                
+                <form id="quickAnalysisForm">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="quickSymbol" 
+                               placeholder="输入股票代码 (如: 000001)" maxlength="6">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search me-1"></i>
+                            分析
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="quickResult" class="mt-3" style="display: none;">
+                    <div class="alert alert-info">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong id="quickSymbolName"></strong>
+                                <br>
+                                <small class="text-muted" id="quickSymbolCode"></small>
+                            </div>
+                            <div class="text-end">
+                                <div class="h5 mb-0" id="quickPrice"></div>
+                                <small id="quickChange"></small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h6 text-muted">RSI</div>
+                                <div id="quickRSI" class="fw-bold"></div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h6 text-muted">趋势</div>
+                                <div id="quickTrend" class="fw-bold"></div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="h6 text-muted">分型</div>
+                            <div id="quickFractal" class="fw-bold"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <a href="#" id="quickDetailLink" class="btn btn-outline-primary btn-sm">
+                            查看详细分析
+                        </a>
+                    </div>
+                </div>
+                
+                <div id="quickLoading" class="text-center mt-3" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">分析中...</span>
+                    </div>
+                    <div class="mt-2">分析中，请稍候...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 功能特性 -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-star me-2"></i>
+                    核心功能
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-chart-area fa-2x text-primary mb-2"></i>
+                            <h6>缠论分析</h6>
+                            <small class="text-muted">分型识别、笔段分析</small>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-chart-line fa-2x text-success mb-2"></i>
+                            <h6>技术指标</h6>
+                            <small class="text-muted">MA、MACD、RSI等</small>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-crosshairs fa-2x text-warning mb-2"></i>
+                            <h6>趋势判断</h6>
+                            <small class="text-muted">多维度趋势分析</small>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-map-marker-alt fa-2x text-info mb-2"></i>
+                            <h6>位置分析</h6>
+                            <small class="text-muted">相对位置判断</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('analysis') }}" class="btn btn-success w-100">
+                        <i class="fas fa-play me-2"></i>
+                        体验完整功能
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 热门股票 -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-fire me-2"></i>
+                    热门股票
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>代码</th>
+                                <th>名称</th>
+                                <th>最新价</th>
+                                <th>涨跌幅</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hotStocksTable">
+                            <tr>
+                                <td>000001</td>
+                                <td>平安银行</td>
+                                <td>12.50</td>
+                                <td><span class="text-success">+2.45%</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="analyzeStock('000001')">
+                                        分析
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>600036</td>
+                                <td>招商银行</td>
+                                <td>42.30</td>
+                                <td><span class="text-danger">-1.20%</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="analyzeStock('600036')">
+                                        分析
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>000858</td>
+                                <td>五粮液</td>
+                                <td>185.60</td>
+                                <td><span class="text-success">+0.85%</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="analyzeStock('000858')">
+                                        分析
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 系统状态 -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    系统状态
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>数据源</span>
+                        <span class="badge bg-success">正常</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>分析引擎</span>
+                        <span class="badge bg-success">运行中</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>缓存系统</span>
+                        <span class="badge bg-success">正常</span>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <small class="text-muted">
+                        系统版本: MVP v1.0<br>
+                        最后更新: <span id="lastUpdate"></span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// 快速分析表单处理
+document.getElementById('quickAnalysisForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const symbol = document.getElementById('quickSymbol').value.trim();
+    if (!symbol) {
+        alert('请输入股票代码');
+        return;
+    }
+    
+    performQuickAnalysis(symbol);
+});
+
+// 执行快速分析
+function performQuickAnalysis(symbol) {
+    const loadingDiv = document.getElementById('quickLoading');
+    const resultDiv = document.getElementById('quickResult');
+    
+    // 显示加载状态
+    loadingDiv.style.display = 'block';
+    resultDiv.style.display = 'none';
+    
+    // 调用API
+    fetch(`/api/analyze/${symbol}`)
+        .then(response => response.json())
+        .then(data => {
+            loadingDiv.style.display = 'none';
+            
+            if (data.error) {
+                alert('分析失败: ' + data.error);
+                return;
+            }
+            
+            // 显示结果
+            displayQuickResult(data);
+            resultDiv.style.display = 'block';
+        })
+        .catch(error => {
+            loadingDiv.style.display = 'none';
+            alert('网络错误: ' + error.message);
+        });
+}
+
+// 显示快速分析结果
+function displayQuickResult(data) {
+    const summary = data.summary;
+    
+    document.getElementById('quickSymbolCode').textContent = data.symbol;
+    document.getElementById('quickSymbolName').textContent = `股票${data.symbol}`;
+    document.getElementById('quickPrice').textContent = `¥${summary.current_price}`;
+    
+    // 涨跌幅显示
+    const changeElement = document.getElementById('quickChange');
+    const changeClass = summary.price_change >= 0 ? 'text-success' : 'text-danger';
+    const changeSign = summary.price_change >= 0 ? '+' : '';
+    changeElement.className = changeClass;
+    changeElement.textContent = `${changeSign}${summary.price_change_pct.toFixed(2)}%`;
+    
+    // RSI
+    document.getElementById('quickRSI').textContent = summary.rsi ? summary.rsi.toFixed(1) : 'N/A';
+    
+    // 趋势
+    const trendMap = {
+        'strong_up': '强势上涨',
+        'strong_down': '强势下跌',
+        'sideways': '震荡'
+    };
+    document.getElementById('quickTrend').textContent = trendMap[summary.trend_strength] || '未知';
+    
+    // 分型
+    const changlun = summary.changlun;
+    if (changlun && changlun.recent_fractal) {
+        const fractalType = changlun.recent_fractal.type === 'top' ? '顶分型' : '底分型';
+        document.getElementById('quickFractal').textContent = fractalType;
+    } else {
+        document.getElementById('quickFractal').textContent = '无';
+    }
+    
+    // 详细分析链接
+    document.getElementById('quickDetailLink').href = `/analysis?symbol=${data.symbol}`;
+}
+
+// 分析指定股票
+function analyzeStock(symbol) {
+    window.location.href = `/analysis?symbol=${symbol}`;
+}
+
+// 更新最后更新时间
+document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+</script>
+{% endblock %}
